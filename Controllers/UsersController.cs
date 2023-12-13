@@ -18,6 +18,7 @@ namespace PopastNaStajirovku2.Controllers
         }
 
         [HttpGet]
+        [Route("register")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<User>>> GetAllUsers(int page = 1, int pagesize = 10)
         {

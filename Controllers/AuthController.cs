@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using PopastNaStajirovku2.Models;
+using Swashbuckle.AspNetCore.Annotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -41,6 +42,7 @@ namespace PopastNaStajirovku2.Controllers
               new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
               new Claim(JwtRegisteredClaimNames.Email, user.Email),
               new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+           
             };
 
             var token = new JwtSecurityToken(
@@ -53,35 +55,33 @@ namespace PopastNaStajirovku2.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-        [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [Route("validateToken")]
-        public IActionResult ValidateToken([FromQuery] string token)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes("d4d202f4210bf8335095eeb822a24f0c");
-            var validationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidIssuer = "YongeApi",
-                ValidateAudience = true,
-                ValidAudience = "users",
-                ValidateLifetime = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key)
-            };
+       
+   
+        //public IActionResult ValidateToken([FromQuery] string token)
+        //{
+        //    var tokenHandler = new JwtSecurityTokenHandler();
+        //    var key = Encoding.UTF8.GetBytes("d4d202f4210bf8335095eeb822a24f0c");
+        //    var validationParameters = new TokenValidationParameters
+        //    {
+        //        ValidateIssuer = true,
+        //        ValidIssuer = "YongeApi",
+        //        ValidateAudience = true,
+        //        ValidAudience = "users",
+        //        ValidateLifetime = true,
+        //        IssuerSigningKey = new SymmetricSecurityKey(key)
+        //    };
 
-            SecurityToken validatedToken;
-            try
-            {
-                var principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
-                return Ok("Токен валиден");
-            }
-            catch (Exception)
-            {
-                return Unauthorized("Токен невалиден");
-            }
-        }
+        //    SecurityToken validatedToken;
+        //    try
+        //    {
+        //        var principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
+        //        return Ok("Токен валиден");
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return Unauthorized("Токен невалиден");
+        //    }
+        //}
 
     }
 }
