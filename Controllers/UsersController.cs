@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PopastNaStajirovku2.Entyties;
 using PopastNaStajirovku2.Models;
@@ -17,6 +18,7 @@ namespace PopastNaStajirovku2.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<User>>> GetAllUsers(int page = 1, int pagesize = 10)
         {
             var allusers = ListUsers.Count;
@@ -25,6 +27,7 @@ namespace PopastNaStajirovku2.Controllers
             return usersPerPage;
         }
         [HttpPost]
+        
         public async Task<ActionResult<User>> CreateNewUser(User user)
         {
             _context.Add(user);
