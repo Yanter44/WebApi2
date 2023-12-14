@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using PopastNaStajirovku2.Entyties;
 using PopastNaStajirovku2.Models;
 using Swashbuckle.AspNetCore.Annotations;
 using System.IdentityModel.Tokens.Jwt;
@@ -15,22 +16,46 @@ namespace PopastNaStajirovku2.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-         public static User user = new User();
-
-
+       
+         public  Context _context;
+        public AuthController(Context context)
+        {
+            _context = context;
+        }
         [HttpPost]
         [Route("register")]
         public async Task<ActionResult<User>> Register(UserDto request)
         {
-         //   string PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.UserPassword);
+            //   string PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.UserPassword);
+            var user = new User();
             user.PasswordHash = request.UserPassword;
             user.Login = request.UserLogin;
             user.Email = request.Email;
             user.Age = request.Age;
 
-            var token = GenerateJwtToken(user);
+          
+            _context.Add(user);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(Register), new { id = user.Id }, user);
+        }
+        [HttpPost]
+        [Route("loging")]
+        public async Task<ActionResult<User>> Loging(User user)
+        {
+            
+                var allusers = _context.Users.ToList();
 
-            return Ok(new { token });
+                for (int i = 0; i < allusers.Count; i++)
+                {
+                    if (allusers[i].Email == user.Email)
+                    {
+                     var token = GenerateJwtToken(allusers[i]); // вызов метода генерации токена
+            return Ok(new { user = allusers[i], token }); 
+                    }
+               
+                }
+                return BadRequest();
+            
         }
         private string GenerateJwtToken(User user)
         {
@@ -55,33 +80,8 @@ namespace PopastNaStajirovku2.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-       
-   
-        //public IActionResult ValidateToken([FromQuery] string token)
-        //{
-        //    var tokenHandler = new JwtSecurityTokenHandler();
-        //    var key = Encoding.UTF8.GetBytes("d4d202f4210bf8335095eeb822a24f0c");
-        //    var validationParameters = new TokenValidationParameters
-        //    {
-        //        ValidateIssuer = true,
-        //        ValidIssuer = "YongeApi",
-        //        ValidateAudience = true,
-        //        ValidAudience = "users",
-        //        ValidateLifetime = true,
-        //        IssuerSigningKey = new SymmetricSecurityKey(key)
-        //    };
 
-        //    SecurityToken validatedToken;
-        //    try
-        //    {
-        //        var principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
-        //        return Ok("Токен валиден");
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return Unauthorized("Токен невалиден");
-        //    }
-        //}
+
 
     }
 }

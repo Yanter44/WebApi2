@@ -11,10 +11,11 @@ namespace PopastNaStajirovku2.Controllers
     {      
         private readonly ILogger<UsersController> _logger;
         public List<User> ListUsers = new List<User>();
-        private readonly Context _context;
-        public UsersController(ILogger<UsersController> logger)
+        public Context _context;
+        public UsersController(ILogger<UsersController> logger, Context context)
         {
             _logger = logger;
+            _context = context;
         }
 
         [HttpGet]
@@ -28,7 +29,6 @@ namespace PopastNaStajirovku2.Controllers
             return usersPerPage;
         }
         [HttpPost]
-        
         public async Task<ActionResult<User>> CreateNewUser(User user)
         {
             _context.Add(user);

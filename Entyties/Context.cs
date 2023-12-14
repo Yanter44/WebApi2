@@ -1,19 +1,25 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+
 using PopastNaStajirovku2.Models;
-using System.Data.Entity;
-using Microsoft.Extensions.DependencyInjection;
+
+
 
 namespace PopastNaStajirovku2.Entyties
 {
-    public class Context : Microsoft.EntityFrameworkCore.DbContext
+    public class Context : DbContext
     {
-        public Microsoft.EntityFrameworkCore.DbSet<User> Users { get; set; }
+        public DbSet<User> Users { get; set; }
 
-        public Context(DbContextOptions<Context> options) : base(options)
+        public Context()
         {
+            
             Database.EnsureCreated();
             Database.OpenConnection();
         }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer("Server=DESKTOP-S9AIDDH\\SQLEXPRESS; Database=AspLerningKnowledge; Trusted_Connection=True; TrustServerCertificate=True");
+        }
+
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PopastNaStajirovku2.Entyties;
 using Microsoft.OpenApi.Models;
 using System.Collections.ObjectModel;
+using WebApi2.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddScoped<JwtTokenValidator>();
+builder.Services.AddDbContext<Context>();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "dotnetClaimAuthorization", Version = "v1" });
@@ -44,8 +47,9 @@ builder.Services.AddSwaggerGen(c =>
 
 
 
-builder.Services.AddDbContext<Context>(options =>
-    options.UseSqlServer("Server=DESKTOP-S9AIDDH\\SQLEXPRESS; Database=AspLerningKnowledge; Trusted_Connection=True; TrustServerCertificate=True"));
+
+//builder.Services.AddDbContext<Context>(options =>
+//    options.UseSqlServer("Server=DESKTOP-S9AIDDH\\SQLEXPRESS; Database=AspLerningKnowledge; Trusted_Connection=True; TrustServerCertificate=True"));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -62,8 +66,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
