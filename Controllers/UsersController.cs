@@ -10,7 +10,7 @@ namespace PopastNaStajirovku2.Controllers
     public class UsersController : ControllerBase
     {      
         private readonly ILogger<UsersController> _logger;
-        public List<User> ListUsers = new List<User>();
+ 
         public Context _context;
         public UsersController(ILogger<UsersController> logger, Context context)
         {
@@ -21,12 +21,10 @@ namespace PopastNaStajirovku2.Controllers
         [HttpGet]
         [Route("register")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers(int page = 1, int pagesize = 10)
+        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
         {
-            var allusers = ListUsers.Count;
-            var allpages = (int)Math.Ceiling((decimal)allusers / pagesize);
-            var usersPerPage = ListUsers.Skip((page - 1) * pagesize).Take(pagesize).ToList();
-            return usersPerPage;
+            var usersPage = _context.Users.ToList();
+            return usersPage;
         }
         [HttpPost]
         public async Task<ActionResult<User>> CreateNewUser(User user)

@@ -4,6 +4,9 @@ using PopastNaStajirovku2.Entyties;
 using Microsoft.OpenApi.Models;
 using System.Collections.ObjectModel;
 using WebApi2.Jwt;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,9 +17,24 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<JwtTokenValidator>();
 builder.Services.AddDbContext<Context>();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = "YongeApi",
+            ValidAudience = "users",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("d4d202f4210bf8335095eeb822a24f0c"))
+        };
+    });
+
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "dotnetClaimAuthorization", Version = "v1" });
+    
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -24,7 +42,7 @@ builder.Services.AddSwaggerGen(c =>
         Name = "Authorization",
         Type = SecuritySchemeType.Http,
         BearerFormat = "JWT",
-        Scheme = "bearer"
+        Scheme = "Bearer"
 
     });
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -48,8 +66,6 @@ builder.Services.AddSwaggerGen(c =>
 
 
 
-//builder.Services.AddDbContext<Context>(options =>
-//    options.UseSqlServer("Server=DESKTOP-S9AIDDH\\SQLEXPRESS; Database=AspLerningKnowledge; Trusted_Connection=True; TrustServerCertificate=True"));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -68,6 +84,30 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+//app.Use(async (context, next) =>
+//{
+//    string token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+//    if (string.IsNullOrEmpty(token))
+//    {
+//        context.Response.StatusCode = 401;
+//        await context.Response.WriteAsync("Unauthorized. No token provided.");
+//        return;
+//    }
+
+//    var tokenValidator = context.RequestServices.GetRequiredService<JwtTokenValidator>();
+//    if (tokenValidator.ValidateToken(token))
+//    {
+//        await next.Invoke();
+    
+//    }
+//    else
+//    {
+//        context.Response.StatusCode = 403;
+//        await context.Response.WriteAsync("Forbidden. Token validation failed.");
+//    }
+//});
+
+
 app.MapControllers();
 
 app.Run();

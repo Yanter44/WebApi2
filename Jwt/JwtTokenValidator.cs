@@ -7,7 +7,7 @@ namespace WebApi2.Jwt
 {
     public class JwtTokenValidator
     {
-        public string ValidateToken([FromQuery] string token)
+        public bool ValidateToken( string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes("d4d202f4210bf8335095eeb822a24f0c");
@@ -25,11 +25,13 @@ namespace WebApi2.Jwt
             try
             {
                 var principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
-                return "Токен валиден";
+
+                return true;
+               
             }
             catch (Exception)
             {
-                return "Токен невалиден";
+                return false;
             }
         }
     }

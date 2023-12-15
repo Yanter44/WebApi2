@@ -33,7 +33,6 @@ namespace PopastNaStajirovku2.Controllers
             user.Email = request.Email;
             user.Age = request.Age;
 
-          
             _context.Add(user);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(Register), new { id = user.Id }, user);
@@ -41,8 +40,7 @@ namespace PopastNaStajirovku2.Controllers
         [HttpPost]
         [Route("loging")]
         public async Task<ActionResult<User>> Loging(User user)
-        {
-            
+        {           
                 var allusers = _context.Users.ToList();
 
                 for (int i = 0; i < allusers.Count; i++)
@@ -50,7 +48,7 @@ namespace PopastNaStajirovku2.Controllers
                     if (allusers[i].Email == user.Email)
                     {
                      var token = GenerateJwtToken(allusers[i]); // вызов метода генерации токена
-            return Ok(new { user = allusers[i], token }); 
+            return Ok(new { token }); 
                     }
                
                 }
