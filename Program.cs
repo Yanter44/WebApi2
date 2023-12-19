@@ -7,6 +7,10 @@ using WebApi2.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using PopastNaStajirovku2.Models;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +21,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<JwtTokenValidator>();
 builder.Services.AddDbContext<Context>();
+
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -79,36 +85,17 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseRouting();
 
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-//app.Use(async (context, next) =>
-//{
-//    string token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-//    if (string.IsNullOrEmpty(token))
-//    {
-//        context.Response.StatusCode = 401;
-//        await context.Response.WriteAsync("Unauthorized. No token provided.");
-//        return;
-//    }
 
-//    var tokenValidator = context.RequestServices.GetRequiredService<JwtTokenValidator>();
-//    if (tokenValidator.ValidateToken(token))
-//    {
-//        await next.Invoke();
-    
-//    }
-//    else
-//    {
-//        context.Response.StatusCode = 403;
-//        await context.Response.WriteAsync("Forbidden. Token validation failed.");
-//    }
-//});
 
 
 app.MapControllers();
+
 
 app.Run();
 

@@ -9,7 +9,7 @@ namespace PopastNaStajirovku2.Entyties
     public class Context : DbContext
     {
         public DbSet<User> Users { get; set; }
-
+     
         public Context()
         {
             

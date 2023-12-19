@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace PopastNaStajirovku2.Models
 {
-    public class User
+    public class User 
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -14,6 +15,9 @@ namespace PopastNaStajirovku2.Models
         public string PasswordHash { get; set; }
         public int Age { get; set; }   
         public string Email { get; set; }
-       // public Role UserRole { get; set; }
+        [JsonIgnore]
+        public string Role { get; set; }
+        
+       
     }
 }
